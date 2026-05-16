@@ -64,7 +64,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # Add your API keys
-cp .env.example .env   # then fill in the values
+touch .env   # then fill in the values below
 ```
 
 Your `.env` should contain:
