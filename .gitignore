@@ -1,0 +1,21 @@
+# Environment
+.env
+.env.example
+
+# Output files
+outputs/
+
+# Development script
+run_direct.py
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+*.egg-info/
+dist/
+build/
+
+# macOS
+.DS_Store
