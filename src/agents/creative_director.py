@@ -24,8 +24,8 @@ STRICT RULES:
    CRITICAL: Do NOT name any real people, directors, photographers, or artists in the \
    runway_prompt — describe the visual style in purely technical and aesthetic terms instead \
    (e.g. instead of a director's name, write "slow meditative wide shots with extreme depth of field"). \
-   CRITICAL: The runway_prompt must be 1000 characters or fewer — Runway's API will reject longer prompts. \
-   Be concise and precise: cut filler, keep only the most evocative visual detail.
+   CRITICAL: The runway_prompt must be 1000 characters or fewer — this ensures compatibility with all supported \
+   image models including Gen-4 Image. Be concise and precise: cut filler, keep only the most evocative visual detail.
 7. The film_references field is for internal concept notes only — those names must never \
    appear in runway_prompt.
 8. Negative prompt should prevent literal science imagery and low quality.\
@@ -66,11 +66,23 @@ _TOOL = {
             },
             "runway_prompt": {
                 "type": "string",
-                "description": "The complete, optimized prompt for Runway Gen-4 Image. Shot description + lighting + color + mood + quality tags. Must contain zero real people's names — translate all style references into descriptive visual language. Hard limit: 1000 characters maximum.",
+                "description": "The complete, optimized prompt for the image model. Shot description + lighting + color + mood + quality tags. Must contain zero real people's names — translate all style references into descriptive visual language. Hard limit: 1000 characters maximum.",
             },
             "negative_prompt": {
                 "type": "string",
                 "description": "What to exclude: lab equipment, scientists, diagrams, text overlays, cartoonish, low quality, etc.",
+            },
+            "motion_prompt": {
+                "type": "string",
+                "description": (
+                    "A prompt for Runway image-to-video that describes how this specific scene should move. "
+                    "Reason from the scientific idea and scene: what camera movement (dolly, orbit, parallax drift, "
+                    "handheld tremor, static lock-off, etc.) and what temporal arc (how the shot evolves across its "
+                    "duration) best embody the phenomenon? A collapse calls for a slow inward pull; "
+                    "entanglement might call for a mirrored split drift; emergence might call for an almost "
+                    "imperceptible bloom from stillness. Be specific about speed, direction, and how the motion "
+                    "serves the idea. End with quality tags: cinematic, film grain."
+                ),
             },
         },
         "required": [
@@ -82,6 +94,7 @@ _TOOL = {
             "film_references",
             "runway_prompt",
             "negative_prompt",
+            "motion_prompt",
         ],
     },
 }
@@ -124,4 +137,5 @@ Essence of the paper: {brief.one_line_essence}"""
         film_references=data["film_references"],
         runway_prompt=data["runway_prompt"],
         negative_prompt=data["negative_prompt"],
+        motion_prompt=data["motion_prompt"],
     )

@@ -26,7 +26,7 @@ def run(
     source: str,
     output_dir: Path,
     num_images: int = 4,
-    video_duration: int = 5,
+    video_duration: int = 8,
     auto: bool = False,
 ) -> PipelineResult:
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -58,7 +58,9 @@ def run(
     console.print(Panel(
         f"[bold]Logline:[/bold] {concept.logline}\n\n"
         f"[bold]Scene:[/bold] {concept.scene_description}\n\n"
-        f"[bold]References:[/bold] {', '.join(concept.film_references)}",
+        f"[bold]References:[/bold] {', '.join(concept.film_references)}\n\n"
+        f"[bold]Image prompt →[/bold] {concept.runway_prompt}\n\n"
+        f"[bold]Motion prompt →[/bold] {concept.motion_prompt}",
         title="[green]Cinematic Concept[/green]",
         expand=False,
     ))

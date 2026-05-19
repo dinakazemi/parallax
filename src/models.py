@@ -39,6 +39,7 @@ class CinematicConcept(BaseModel):
     film_references: list[str]
     runway_prompt: str  # final generation prompt for Runway Gen-4 Image
     negative_prompt: str
+    motion_prompt: str  # final generation prompt for Runway image-to-video
 
 
 class ImageResult(BaseModel):
@@ -68,10 +69,12 @@ class PipelineResult(BaseModel):
 
 # Available Runway models exposed to the user
 IMAGE_MODELS: dict[str, str] = {
-    "gen4_image": "Runway Gen-4 Image — highest quality, photorealistic cinematic stills",
+    "gemini_image3_pro": "Nano Banana Pro (gemini_image3_pro) — up to 4K, 5500-char prompts, 14 reference images",
+    "gen4_image": "Runway Gen-4 Image — photorealistic cinematic stills",
 }
 
 VIDEO_MODELS: dict[str, str] = {
-    "gen4_turbo": "Runway Gen-4 Turbo — best quality, 5 or 10 second clips",
-    "gen3a_turbo": "Runway Gen-3 Alpha Turbo — faster, more affordable",
+    "veo3.1": "Veo 3.1 — highest quality image-to-video",
+    "gen4_turbo": "Runway Gen-4 Turbo — cinematic image-to-video",
+    "gen4.5": "Runway Gen-4.5 — image-to-video",
 }

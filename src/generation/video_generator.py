@@ -11,20 +11,18 @@ def generate_videos(
     selected_images: list[ImageResult],
     concept: CinematicConcept,
     output_dir: Path,
-    model: str = "gen4_turbo",
-    duration: int = 5,
+    model: str = "veo3.1",
+    duration: int = 8,
 ) -> list[VideoResult]:
     client = RunwayML(api_key=os.environ["RUNWAY_API_KEY"])
     results: list[VideoResult] = []
-
-    motion_prompt = _build_motion_prompt(concept)
 
     for img in selected_images:
         try:
             task = client.image_to_video.create(
                 model=model,
                 prompt_image=img.url,
-                prompt_text=motion_prompt,
+                prompt_text=concept.motion_prompt,
                 duration=duration,
                 ratio=_RATIO,
             ).wait_for_task_output()
@@ -49,18 +47,6 @@ def generate_videos(
 
     return results
 
-
-def _build_motion_prompt(concept: CinematicConcept) -> str:
-    # return (
-    #     f"Slow, meditative camera movement. {concept.scene_description} "
-    #     f"Atmosphere: {', '.join(concept.mood_keywords[:3])}. "
-    #     f"Cinematic, no sudden cuts, gentle drift, film grain."
-    # )
-    return (
-        f"Slow, meditative camera movement."
-        f"Atmosphere: {', '.join(concept.mood_keywords[:3])}. "
-        f"Cinematic, no sudden cuts, gentle drift, film grain."
-    )
 
 
 def _download_file(url: str, dest: Path) -> None:

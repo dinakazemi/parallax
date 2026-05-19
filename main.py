@@ -22,9 +22,9 @@ def main(
         help="Number of image variants to generate.",
     ),
     duration: int = typer.Option(
-        5,
+        8,
         "--duration", "-d",
-        help="Video clip duration in seconds (5 or 10).",
+        help="Video clip duration in seconds. Veo3.1 supports 4, 6, or 8. Gen-4 supports 2-10.",
     ),
     auto: bool = typer.Option(
         False,

@@ -4,24 +4,30 @@ from pathlib import Path
 from runwayml import RunwayML, TaskFailedError
 from src.models import CinematicConcept, ImageResult
 
-_RATIO = "1280:720"  # cinematic 16:9, confirmed supported by Runway
+# gemini_image3_pro doesn't support 1280:720; 1344:768 (7:4) is the closest landscape ratio
+_RATIO_BY_MODEL: dict[str, str] = {
+    "gemini_image3_pro": "1344:768",
+    "gen4_image": "1280:720",
+}
+_RATIO_DEFAULT = "1280:720"
 
 
 def generate_images(
     concept: CinematicConcept,
     output_dir: Path,
-    model: str = "gen4_image",
+    model: str = "gemini_image3_pro",
     num_images: int = 4,
 ) -> list[ImageResult]:
     client = RunwayML(api_key=os.environ["RUNWAY_API_KEY"])
     results: list[ImageResult] = []
+    ratio = _RATIO_BY_MODEL.get(model, _RATIO_DEFAULT)
 
     for i in range(num_images):
         try:
             task = client.text_to_image.create(
                 model=model,
                 prompt_text=concept.runway_prompt,
-                ratio=_RATIO,
+                ratio=ratio,
             ).wait_for_task_output()
         except TaskFailedError as e:
             raise RuntimeError(
