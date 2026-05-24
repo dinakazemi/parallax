@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parallax</title>
+<style>
+:root {
+  --bg:          #080808;
+  --bg-card:     #0d0d0d;
+  --bg-input:    #0a0a0a;
+  --border:      #1c1c1c;
+  --border-dim:  #141414;
+  --text:        #d4d4d4;
+  --text-muted:  #5a5a5a;
+  --text-dim:    #383838;
+  --accent:      #c9a84c;
+  --accent-dim:  #6b5a28;
+  --success:     #4e8c4e;
+  --error:       #a04040;
+  --radius:      3px;
+  --mono:        'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+body { padding: 40px 24px 80px; max-width: 760px; margin: 0 auto; }
+
+/* ── Header ── */
+header { margin-bottom: 48px; }
+header h1 {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+header h1 span { color: var(--accent); }
+
+/* ── Card ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+/* ── Form ── */
+.form-row { display: flex; gap: 10px; margin-bottom: 14px; align-items: flex-end; }
+.form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+
+input[type="text"],
+select {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 13px;
+  padding: 8px 10px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+input[type="text"]:focus, select:focus { border-color: var(--accent-dim); }
+input[type="text"]::placeholder { color: var(--text-dim); }
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border-dim);
+  margin: 16px 0;
+}
+
+.form-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 9px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: transparent;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.btn:hover { border-color: var(--text-dim); color: var(--text); }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--bg-card);
+  border-color: var(--accent-dim);
+  color: var(--accent);
+  width: 100%;
+  padding: 11px;
+  font-size: 13px;
+}
+.btn-primary:hover:not(:disabled) { background: #1a1506; border-color: var(--accent); }
+
+.btn-confirm {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #080808;
+  font-weight: 600;
+  padding: 10px 24px;
+}
+.btn-confirm:hover:not(:disabled) { background: #d4b25a; }
+.btn-confirm:disabled { background: var(--accent-dim); border-color: var(--accent-dim); color: #080808; opacity: 0.5; }
+
+.upload-label {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--bg-input);
+  white-space: nowrap;
+}
+.upload-label:hover { border-color: var(--text-dim); color: var(--text); }
+.upload-label.has-file { border-color: var(--accent-dim); color: var(--accent); }
+input[type="file"] { display: none; }
+
+/* ── Source row ── */
+.source-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 14px; }
+.source-row .form-group { flex: 1; }
+
+/* ── Pipeline ── */
+#pipeline { display: none; }
+#pipeline.visible { display: block; }
+
+.section-title {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+/* ── Steps ── */
+.steps { display: flex; flex-direction: column; gap: 0; }
+
+.step {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-dim);
+  animation: fadeIn 0.3s ease;
+}
+.step:last-child { border-bottom: none; }
+
+.step-icon {
+  width: 18px; height: 18px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+}
+
+.step-icon .spinner {
+  width: 14px; height: 14px;
+  border: 1.5px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.step-icon .check { color: var(--success); font-size: 14px; }
+.step-icon .err { color: var(--error); font-size: 14px; }
+
+.step-body { flex: 1; min-width: 0; }
+.step-label { font-size: 13px; color: var(--text); }
+.step-label.running { color: var(--text-muted); }
+.step-detail { margin-top: 8px; }
+
+/* ── Data panels ── */
+.data-panel {
+  background: var(--bg);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.data-title {
+  font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 8px;
+}
+
+.data-value { font-size: 13px; color: var(--text); line-height: 1.5; }
+.data-value.mono { font-family: var(--mono); font-size: 11px; color: #a89060; line-height: 1.6; }
+.data-meta { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.tag {
+  font-size: 10px; letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-muted);
+}
+
+/* ── Image grid ── */
+#images-section { display: none; animation: fadeIn 0.4s ease; }
+#images-section.visible { display: block; }
+
+.image-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.image-cell {
+  position: relative;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.15s;
+  aspect-ratio: 7/4;
+  background: var(--bg-card);
+}
+.image-cell:hover { border-color: var(--text-dim); }
+.image-cell.selected { border-color: var(--accent); }
+
+.image-cell img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.2s;
+}
+
+.image-cell .sel-overlay {
+  position: absolute; inset: 0;
+  background: rgba(201,168,76,0.15);
+  display: flex; align-items: flex-end; justify-content: flex-end;
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.image-cell.selected .sel-overlay { opacity: 1; }
+
+.sel-check {
+  width: 22px; height: 22px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: #080808; font-weight: 700;
+}
+
+.selection-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-dim);
+}
+
+.selection-count { font-size: 12px; color: var(--text-muted); }
+.selection-count span { color: var(--accent); font-weight: 500; }
+
+.sel-actions { display: flex; gap: 8px; }
+
+/* ── Video grid ── */
+#videos-section { display: none; animation: fadeIn 0.4s ease; }
+#videos-section.visible { display: block; }
+
+.video-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.video-cell {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-card);
+  aspect-ratio: 7/4;
+}
+
+video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Done banner ── */
+.done-banner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid var(--success);
+  border-radius: var(--radius);
+  color: var(--success);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ── Error ── */
+.error-panel {
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  color: var(--error);
+  font-size: 12px;
+  animation: fadeIn 0.3s ease;
+}
+.error-panel pre {
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── Animations ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span>P</span>ARALLAX</h1>
+</header>
+
+<!-- ── Form ── -->
+<div class="card" id="form-card">
+  <div class="source-row">
+    <div class="form-group">
+      <label>ArXiv ID or URL</label>
+      <input type="text" id="source-input" placeholder="e.g. 2301.07658 or https://arxiv.org/abs/…">
+    </div>
+    <label class="upload-label" id="upload-label" title="Upload a local PDF instead">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 1a.5.5 0 0 1 .5.5v7.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 9.293V1.5A.5.5 0 0 1 8 1z"/>
+        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.1a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.1a.5.5 0 0 1 1 0v2.1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.1a.5.5 0 0 1 .5-.5z"/>
+      </svg>
+      <span id="upload-name">Upload PDF</span>
+      <input type="file" id="pdf-upload" accept=".pdf">
+    </label>
+  </div>
+
+  <hr class="divider">
+
+  <div class="form-options">
+    <div class="form-group">
+      <label>Image model</label>
+      <select id="image-model"></select>
+    </div>
+    <div class="form-group">
+      <label>Video model</label>
+      <select id="video-model"></select>
+    </div>
+    <div class="form-group">
+      <label>Images to generate</label>
+      <select id="num-images">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4" selected>4</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Video duration</label>
+      <select id="duration">
+        <option value="4">4 seconds</option>
+        <option value="6">6 seconds</option>
+        <option value="8" selected>8 seconds</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" id="run-btn" onclick="startPipeline()">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
+    </svg>
+    Run Pipeline
+  </button>
+</div>
+
+<!-- ── Pipeline ── -->
+<div id="pipeline">
+  <div class="card">
+    <p class="section-title">Pipeline</p>
+    <div class="steps" id="steps"></div>
+    <div id="error-container"></div>
+  </div>
+
+  <!-- Image selection -->
+  <div id="images-section">
+    <div class="card">
+      <p class="section-title">Select images for video</p>
+      <div class="image-grid" id="image-grid"></div>
+      <div class="selection-bar">
+        <span class="selection-count"><span id="sel-count">0</span> selected</span>
+        <div class="sel-actions">
+          <button class="btn" onclick="selectAll()">Select all</button>
+          <button class="btn btn-confirm" id="confirm-btn" onclick="confirmSelection()" disabled>
+            Generate Videos
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Videos -->
+  <div id="videos-section">
+    <div class="card">
+      <p class="section-title">Videos</p>
+      <div class="video-grid" id="video-grid"></div>
+    </div>
+  </div>
+
+  <div id="done-container"></div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let jobId = null;
+let es = null;
+let currentStepEl = null;
+let selectedIndices = new Set();
+let totalImages = 0;
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+(async function init() {
+  const res = await fetch('/models');
+  const { image, video } = await res.json();
+  const imgSel = document.getElementById('image-model');
+  const vidSel = document.getElementById('video-model');
+  Object.entries(image).forEach(([id, desc]) => {
+    const opt = new Option(desc, id);
+    imgSel.appendChild(opt);
+  });
+  Object.entries(video).forEach(([id, desc]) => {
+    const opt = new Option(desc, id);
+    vidSel.appendChild(opt);
+  });
+})();
+
+// PDF upload label
+document.getElementById('pdf-upload').addEventListener('change', function () {
+  const label = document.getElementById('upload-label');
+  const nameEl = document.getElementById('upload-name');
+  if (this.files[0]) {
+    nameEl.textContent = this.files[0].name;
+    label.classList.add('has-file');
+    document.getElementById('source-input').value = '';
+  } else {
+    nameEl.textContent = 'Upload PDF';
+    label.classList.remove('has-file');
+  }
+});
+
+// ── Start pipeline ────────────────────────────────────────────────────────────
+async function startPipeline() {
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+
+  const file = document.getElementById('pdf-upload').files[0];
+  const source = document.getElementById('source-input').value.trim();
+  const imageModel = document.getElementById('image-model').value;
+  const videoModel = document.getElementById('video-model').value;
+  const numImages = parseInt(document.getElementById('num-images').value);
+  const duration = parseInt(document.getElementById('duration').value);
+
+  if (!source && !file) {
+    alert('Enter an ArXiv ID/URL or upload a PDF.');
+    btn.disabled = false;
+    return;
+  }
+
+  // Show pipeline section
+  document.getElementById('pipeline').classList.add('visible');
+  document.getElementById('steps').innerHTML = '';
+  selectedIndices.clear();
+
+  let jobData;
+  try {
+    if (file) {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('num_images', numImages);
+      fd.append('image_model', imageModel);
+      fd.append('video_model', videoModel);
+      fd.append('duration', duration);
+      const res = await fetch('/jobs/upload', { method: 'POST', body: fd });
+      jobData = await res.json();
+    } else {
+      const res = await fetch('/jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source, num_images: numImages, image_model: imageModel, video_model: videoModel, duration }),
+      });
+      jobData = await res.json();
+    }
+  } catch (err) {
+    showError('Failed to start pipeline: ' + err.message);
+    btn.disabled = false;
+    return;
+  }
+
+  jobId = jobData.job_id;
+  connectSSE(jobId);
+}
+
+// ── SSE ───────────────────────────────────────────────────────────────────────
+function connectSSE(id) {
+  if (es) es.close();
+  es = new EventSource(`/jobs/${id}/stream`);
+  es.onmessage = (e) => handleEvent(JSON.parse(e.data));
+  es.onerror = () => {
+    // Silently ignore connection errors (SSE closes naturally when done)
+  };
+}
+
+// ── Event handlers ────────────────────────────────────────────────────────────
+function handleEvent(event) {
+  switch (event.type) {
+    case 'step':            onStep(event); break;
+    case 'paper':           onPaper(event); break;
+    case 'brief':           onBrief(event); break;
+    case 'concept':         onConcept(event); break;
+    case 'images_ready':    onImagesReady(event); break;
+    case 'awaiting_selection': onAwaitingSelection(); break;
+    case 'videos_ready':    onVideosReady(event); break;
+    case 'done':            onDone(); break;
+    case 'error':           onError(event); break;
+    case 'heartbeat':       break;
+  }
+}
+
+function onStep(event) {
+  // Mark previous step done
+  if (currentStepEl) completeStep(currentStepEl);
+
+  const el = document.createElement('div');
+  el.className = 'step';
+  el.id = 'step-' + event.id;
+  el.innerHTML = `
+    <div class="step-icon"><div class="spinner"></div></div>
+    <div class="step-body">
+      <div class="step-label running">${event.label}</div>
+      <div class="step-detail" id="detail-${event.id}"></div>
+    </div>`;
+  document.getElementById('steps').appendChild(el);
+  currentStepEl = el;
+}
+
+function completeStep(el) {
+  el.querySelector('.spinner')?.replaceWith(makeIcon('check'));
+  el.querySelector('.step-label')?.classList.remove('running');
+}
+
+function makeIcon(type) {
+  const span = document.createElement('span');
+  span.className = type;
+  span.textContent = type === 'check' ? '✓' : '✕';
+  return span;
+}
+
+function onPaper(event) {
+  const detail = document.getElementById('detail-ingest');
+  if (!detail) return;
+  detail.innerHTML = `<div class="data-panel">
+    <div class="data-title">Paper</div>
+    <div class="data-value">${esc(event.title)}</div>
+    <div class="data-meta">${esc(event.abstract)}…</div>
+  </div>`;
+}
+
+function onBrief(event) {
+  const detail = document.getElementById('detail-brief');
+  if (!detail) return;
+  const tags = event.tones.map(t => `<span class="tag">${t}</span>`).join('');
+  detail.innerHTML = `<div class="data-panel">
+    <div class="data-title">Essence</div>
+    <div class="data-value">${esc(event.essence)}</div>
+    <div class="tags">${tags}</div>
+  </div>`;
+}
+
+function onConcept(event) {
+  const detail = document.getElementById('detail-concept');
+  if (!detail) return;
+  const refs = event.references.map(r => `<span class="tag">${esc(r)}</span>`).join('');
+  detail.innerHTML = `<div class="data-panel">
+    <div class="data-title">Logline</div>
+    <div class="data-value">${esc(event.logline)}</div>
+    <div class="data-title" style="margin-top:10px">Image prompt</div>
+    <div class="data-value mono">${esc(event.image_prompt)}</div>
+    <div class="data-title" style="margin-top:10px">Motion prompt</div>
+    <div class="data-value mono">${esc(event.motion_prompt)}</div>
+    <div class="tags" style="margin-top:8px">${refs}</div>
+  </div>`;
+}
+
+function onImagesReady(event) {
+  if (currentStepEl) completeStep(currentStepEl);
+  currentStepEl = null;
+
+  totalImages = event.images.length;
+  const grid = document.getElementById('image-grid');
+  grid.innerHTML = '';
+
+  event.images.forEach(img => {
+    const cell = document.createElement('div');
+    cell.className = 'image-cell';
+    cell.dataset.index = img.index;
+    cell.innerHTML = `
+      <img src="${img.url}" loading="lazy" alt="Generated image ${img.index + 1}">
+      <div class="sel-overlay"><div class="sel-check">✓</div></div>`;
+    cell.addEventListener('click', () => toggleImage(img.index, cell));
+    grid.appendChild(cell);
+  });
+
+  document.getElementById('images-section').classList.add('visible');
+}
+
+function onAwaitingSelection() {
+  // Images already shown; just ensure confirm is available
+}
+
+function toggleImage(index, cell) {
+  if (selectedIndices.has(index)) {
+    selectedIndices.delete(index);
+    cell.classList.remove('selected');
+  } else {
+    selectedIndices.add(index);
+    cell.classList.add('selected');
+  }
+  updateSelectionUI();
+}
+
+function selectAll() {
+  document.querySelectorAll('.image-cell').forEach(cell => {
+    const idx = parseInt(cell.dataset.index);
+    selectedIndices.add(idx);
+    cell.classList.add('selected');
+  });
+  updateSelectionUI();
+}
+
+function updateSelectionUI() {
+  document.getElementById('sel-count').textContent = selectedIndices.size;
+  document.getElementById('confirm-btn').disabled = selectedIndices.size === 0;
+}
+
+async function confirmSelection() {
+  document.getElementById('confirm-btn').disabled = true;
+  document.getElementById('images-section').querySelector('.selection-bar').style.opacity = '0.4';
+
+  // Add videos step manually since it comes after user action
+  const stepEl = document.createElement('div');
+  stepEl.className = 'step';
+  stepEl.id = 'step-videos';
+  stepEl.innerHTML = `
+    <div class="step-icon"><div class="spinner"></div></div>
+    <div class="step-body">
+      <div class="step-label running">Generating video clip(s)</div>
+      <div class="step-detail" id="detail-videos"></div>
+    </div>`;
+  document.getElementById('steps').appendChild(stepEl);
+  currentStepEl = stepEl;
+
+  await fetch(`/jobs/${jobId}/select`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ indices: Array.from(selectedIndices) }),
+  });
+}
+
+function onVideosReady(event) {
+  if (currentStepEl) completeStep(currentStepEl);
+  currentStepEl = null;
+
+  const grid = document.getElementById('video-grid');
+  grid.innerHTML = '';
+  event.videos.forEach(v => {
+    const cell = document.createElement('div');
+    cell.className = 'video-cell';
+    cell.innerHTML = `<video src="${v.url}" controls loop muted playsinline></video>`;
+    grid.appendChild(cell);
+  });
+  document.getElementById('videos-section').classList.add('visible');
+}
+
+function onDone() {
+  if (currentStepEl) completeStep(currentStepEl);
+  currentStepEl = null;
+  if (es) es.close();
+
+  document.getElementById('done-container').innerHTML = `
+    <div class="done-banner">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
+      </svg>
+      Pipeline complete
+    </div>`;
+
+  document.getElementById('run-btn').disabled = false;
+}
+
+function onError(event) {
+  if (currentStepEl) {
+    currentStepEl.querySelector('.spinner')?.replaceWith(makeIcon('err'));
+    currentStepEl.querySelector('.step-label')?.classList.remove('running');
+  }
+  if (es) es.close();
+  document.getElementById('run-btn').disabled = false;
+
+  document.getElementById('error-container').innerHTML = `
+    <div class="error-panel">
+      <strong>Error:</strong> ${esc(event.message)}
+      ${event.trace ? `<pre>${esc(event.trace)}</pre>` : ''}
+    </div>`;
+}
+
+function showError(msg) {
+  document.getElementById('error-container').innerHTML = `
+    <div class="error-panel"><strong>Error:</strong> ${esc(msg)}</div>`;
+}
+
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
