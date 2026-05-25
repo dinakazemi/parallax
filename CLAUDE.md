@@ -45,15 +45,15 @@ All inter-stage data is Pydantic: `PaperContent → ScienceBrief → CinematicCo
 
 ### Agent design
 
-Both agents use **forced tool use** (`tool_choice={"type": "tool", "name": "..."}`) so Claude always returns structured JSON. The science agent is instructed to ignore methods/equipment and focus on phenomenon and philosophical implication. The creative director is instructed never to name real people in `runway_prompt` (Runway rejects them) — only in `film_references`.
+Both agents use **forced tool use** (`tool_choice={"type": "tool", "name": "..."}`) so Claude always returns structured JSON. The science agent is instructed to ignore methods/equipment and focus on phenomenon and philosophical implication. The creative director makes **two Claude calls**: pass 1 produces the image concept (including `image_prompt`), pass 2 receives the `image_prompt` + full science brief as explicit input and generates `motion_prompt` — guaranteeing the video prompt animates the exact scene designed in the image prompt. Real people's names must never appear in `image_prompt` — only in `film_references`.
 
 ### Key constraints
 
-- `runway_prompt` must be ≤ 1000 characters (enforced in the creative director system prompt) for cross-model compatibility.
+- `image_prompt` has no hard character limit — model-specific limits are handled by the image generator.
 - `gemini_image3_pro` requires ratio `1344:768`; `gen4_image` uses `1280:720` — handled in `_RATIO_BY_MODEL` in `image_generator.py`.
 - Veo 3.1 duration supports 4/6/8 seconds; Gen-4 supports 2–10.
 - Outputs are saved to `outputs/` (CLI) or `outputs/web/<job_id>/` (web).
 
-### Git rules
+### Pre-commit rules
 - Before any commits, check the repo and add any irrelevant components to .gitingore
 - Before any commits, check if CLOUDE.md needs to be updated

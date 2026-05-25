@@ -20,5 +20,5 @@ build/
 # macOS
 .DS_Store
 
-# Claude Code local settings
-.claude/
+# Claude Code local settings (project settings.json is tracked)
+.claude/settings.local.json
