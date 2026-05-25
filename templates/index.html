@@ -590,7 +590,9 @@ function onBrief(event) {
   if (!detail) return;
   const tags = event.tones.map(t => `<span class="tag">${t}</span>`).join('');
   detail.innerHTML = `<div class="data-panel">
-    <div class="data-title">Essence</div>
+    <div class="data-title">Summary</div>
+    <div class="data-value">${esc(event.summary)}</div>
+    <div class="data-title" style="margin-top:10px">Essence</div>
     <div class="data-value">${esc(event.essence)}</div>
     <div class="tags">${tags}</div>
   </div>`;

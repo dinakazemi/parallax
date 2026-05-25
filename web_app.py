@@ -106,9 +106,7 @@ async def stream(job_id: str):
         loop = asyncio.get_event_loop()
         while True:
             try:
-                event = await loop.run_in_executor(
-                    None, lambda: job.q.get(timeout=30)
-                )
+                event = await loop.run_in_executor(None, lambda: job.q.get(timeout=30))
             except queue.Empty:
                 yield 'data: {"type":"heartbeat"}\n\n'
                 continue
@@ -154,46 +152,59 @@ def _run(job_id: str, req: _RunRequest):
 
     try:
         emit({"type": "step", "id": "ingest", "label": "Ingesting paper"})
-        paper = fetch_arxiv(req.source) if _is_arxiv(req.source) else parse_pdf(req.source)
+        paper = (
+            fetch_arxiv(req.source) if _is_arxiv(req.source) else parse_pdf(req.source)
+        )
         emit({"type": "paper", "title": paper.title, "abstract": paper.abstract[:600]})
 
         emit({"type": "step", "id": "brief", "label": "Extracting scientific essence"})
         brief = extract_science_brief(paper)
-        emit({
-            "type": "brief",
-            "essence": brief.one_line_essence,
-            "phenomenon": brief.core_phenomenon,
-            "tones": [t.value for t in brief.emotional_tones],
-        })
+        emit(
+            {
+                "type": "brief",
+                "summary": brief.plain_summary,
+                "essence": brief.one_line_essence,
+                "phenomenon": brief.core_phenomenon,
+                "tones": [t.value for t in brief.emotional_tones],
+            }
+        )
 
         emit({"type": "step", "id": "concept", "label": "Generating cinematic concept"})
         concept = generate_cinematic_concept(brief)
-        emit({
-            "type": "concept",
-            "logline": concept.logline,
-            "scene": concept.scene_description,
-            "image_prompt": concept.runway_prompt,
-            "motion_prompt": concept.motion_prompt,
-            "references": concept.film_references,
-        })
+        emit(
+            {
+                "type": "concept",
+                "logline": concept.logline,
+                "scene": concept.scene_description,
+                "image_prompt": concept.image_prompt,
+                "motion_prompt": concept.motion_prompt,
+                "references": concept.film_references,
+            }
+        )
 
-        emit({"type": "step", "id": "images", "label": f"Generating {req.num_images} images"})
-        images = generate_images(concept, out, model=req.image_model, num_images=req.num_images)
-        job.images = images
-        emit({"type": "images_ready", "images": [
-            {"index": img.index, "url": _web_url(img.local_path)} for img in images
-        ]})
+        # emit(
+        #     {
+        #         "type": "step",
+        #         "id": "images",
+        #         "label": f"Generating {req.num_images} images",
+        #     }
+        # )
+        # images = generate_images(concept, out, model=req.image_model, num_images=req.num_images)
+        # job.images = images
+        # emit({"type": "images_ready", "images": [
+        #     {"index": img.index, "url": _web_url(img.local_path)} for img in images
+        # ]})
 
-        emit({"type": "awaiting_selection"})
-        job.selection_event.wait()
+        # emit({"type": "awaiting_selection"})
+        # job.selection_event.wait()
 
-        selected = [images[i] for i in job.selected if i < len(images)] or images
+        # selected = [images[i] for i in job.selected if i < len(images)] or images
 
-        emit({"type": "step", "id": "videos", "label": f"Generating {len(selected)} video clip(s)"})
-        videos = generate_videos(selected, concept, out, model=req.video_model, duration=req.duration)
-        emit({"type": "videos_ready", "videos": [
-            {"url": _web_url(v.local_path), "source": v.source_image_index} for v in videos
-        ]})
+        # emit({"type": "step", "id": "videos", "label": f"Generating {len(selected)} video clip(s)"})
+        # videos = generate_videos(selected, concept, out, model=req.video_model, duration=req.duration)
+        # emit({"type": "videos_ready", "videos": [
+        #     {"url": _web_url(v.local_path), "source": v.source_image_index} for v in videos
+        # ]})
 
         emit({"type": "done"})
 

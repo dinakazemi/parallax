@@ -44,6 +44,11 @@ def run(
         brief = extract_science_brief(paper)
 
     console.print(Panel(
+        brief.plain_summary,
+        title="[green]What This Paper Is About[/green]",
+        expand=False,
+    ))
+    console.print(Panel(
         f"[bold]Essence:[/bold] {brief.one_line_essence}\n\n"
         f"[bold]Phenomenon:[/bold] {brief.core_phenomenon}\n\n"
         f"[bold]Tones:[/bold] {', '.join(t.value for t in brief.emotional_tones)}",
@@ -59,7 +64,7 @@ def run(
         f"[bold]Logline:[/bold] {concept.logline}\n\n"
         f"[bold]Scene:[/bold] {concept.scene_description}\n\n"
         f"[bold]References:[/bold] {', '.join(concept.film_references)}\n\n"
-        f"[bold]Image prompt →[/bold] {concept.runway_prompt}\n\n"
+        f"[bold]Image prompt →[/bold] {concept.image_prompt}\n\n"
         f"[bold]Motion prompt →[/bold] {concept.motion_prompt}",
         title="[green]Cinematic Concept[/green]",
         expand=False,

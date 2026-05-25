@@ -26,7 +26,7 @@ def generate_images(
         try:
             task = client.text_to_image.create(
                 model=model,
-                prompt_text=concept.runway_prompt,
+                prompt_text=concept.image_prompt,
                 ratio=ratio,
             ).wait_for_task_output()
         except TaskFailedError as e:

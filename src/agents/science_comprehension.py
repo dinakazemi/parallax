@@ -1,6 +1,6 @@
 import os
 import anthropic
-from src.models import PaperContent, ScienceBrief, EmotionalTone
+from src.models import PaperContent, ScienceBrief, EmotionalTone, SpatialScale, TemporalDynamic, PhysicalProcess
 
 _MODEL = "claude-opus-4-7"
 
@@ -27,6 +27,10 @@ _TOOL = {
     "input_schema": {
         "type": "object",
         "properties": {
+            "plain_summary": {
+                "type": "string",
+                "description": "A plain-language explanation of what this paper is about and why it matters. Written for a curious non-expert — no jargon, no methods, no statistics. 3-5 sentences.",
+            },
             "core_phenomenon": {
                 "type": "string",
                 "description": "What is actually happening in nature (not how it was measured). 2-4 sentences.",
@@ -43,7 +47,16 @@ _TOOL = {
                 "type": "array",
                 "items": {
                     "type": "string",
-                    "enum": ["awe", "dread", "wonder", "uncanny", "melancholy", "euphoria", "existential", "sublime"],
+                    "enum": [
+                        "awe",
+                        "dread",
+                        "wonder",
+                        "uncanny",
+                        "melancholy",
+                        "euphoria",
+                        "existential",
+                        "sublime",
+                    ],
                 },
                 "description": "The dominant emotional registers evoked by this phenomenon. Pick 2-4.",
             },
@@ -56,14 +69,33 @@ _TOOL = {
                 "type": "string",
                 "description": "The absolute soul of this paper in one evocative sentence — not a summary, a feeling.",
             },
+            "spatial_scale": {
+                "type": "string",
+                "enum": ["cosmic", "planetary", "geological", "ecological", "human", "cellular", "molecular", "quantum"],
+                "description": "The dominant physical scale of the phenomenon.",
+            },
+            "temporal_dynamic": {
+                "type": "string",
+                "enum": ["instantaneous", "fast_rhythmic", "slow_gradual", "geological_epochal", "eternal_static"],
+                "description": "The characteristic timescale at which the phenomenon operates.",
+            },
+            "physical_process": {
+                "type": "string",
+                "enum": ["collapse_convergence", "expansion_emergence", "oscillation_wave", "flow_drift", "transformation_phase", "entanglement_correlation", "boundary_threshold", "cascade_chain"],
+                "description": "The dominant physical process or dynamic that characterises the phenomenon.",
+            },
         },
         "required": [
+            "plain_summary",
             "core_phenomenon",
             "counterintuitive_element",
             "philosophical_implication",
             "emotional_tones",
             "visual_metaphors_in_paper",
             "one_line_essence",
+            "spatial_scale",
+            "temporal_dynamic",
+            "physical_process",
         ],
     },
 }
@@ -93,10 +125,14 @@ Paper body:
     data = tool_use.input
 
     return ScienceBrief(
+        plain_summary=data["plain_summary"],
         core_phenomenon=data["core_phenomenon"],
         counterintuitive_element=data["counterintuitive_element"],
         philosophical_implication=data["philosophical_implication"],
         emotional_tones=[EmotionalTone(t) for t in data["emotional_tones"]],
         visual_metaphors_in_paper=data.get("visual_metaphors_in_paper", []),
         one_line_essence=data["one_line_essence"],
+        spatial_scale=SpatialScale(data["spatial_scale"]),
+        temporal_dynamic=TemporalDynamic(data["temporal_dynamic"]),
+        physical_process=PhysicalProcess(data["physical_process"]),
     )

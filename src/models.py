@@ -14,6 +14,36 @@ class EmotionalTone(str, Enum):
     SUBLIME = "sublime"
 
 
+class SpatialScale(str, Enum):
+    COSMIC = "cosmic"  # galaxies, universe-scale
+    PLANETARY = "planetary"  # planets, atmospheres
+    GEOLOGICAL = "geological"  # landscapes, tectonic
+    ECOLOGICAL = "ecological"  # ecosystems, organisms
+    HUMAN = "human"  # body-scale
+    CELLULAR = "cellular"  # cells, tissue
+    MOLECULAR = "molecular"  # molecules, proteins
+    QUANTUM = "quantum"  # atoms, subatomic
+
+
+class TemporalDynamic(str, Enum):
+    INSTANTANEOUS = "instantaneous"  # faster than perception
+    FAST_RHYTHMIC = "fast_rhythmic"  # heartbeat, neural firing
+    SLOW_GRADUAL = "slow_gradual"  # seasons, growth
+    GEOLOGICAL_EPOCHAL = "geological_epochal"  # millions of years
+    ETERNAL_STATIC = "eternal_static"  # constants, equilibria
+
+
+class PhysicalProcess(str, Enum):
+    COLLAPSE_CONVERGENCE = "collapse_convergence"
+    EXPANSION_EMERGENCE = "expansion_emergence"
+    OSCILLATION_WAVE = "oscillation_wave"
+    FLOW_DRIFT = "flow_drift"
+    TRANSFORMATION_PHASE = "transformation_phase"
+    ENTANGLEMENT_CORRELATION = "entanglement_correlation"
+    BOUNDARY_THRESHOLD = "boundary_threshold"
+    CASCADE_CHAIN = "cascade_chain"
+
+
 class PaperContent(BaseModel):
     title: str
     abstract: str
@@ -22,12 +52,16 @@ class PaperContent(BaseModel):
 
 
 class ScienceBrief(BaseModel):
+    plain_summary: str  # accessible, jargon-free explanation for a curious non-expert
     core_phenomenon: str
     counterintuitive_element: str
     philosophical_implication: str
     emotional_tones: list[EmotionalTone]
     visual_metaphors_in_paper: list[str]  # metaphors the authors themselves used
     one_line_essence: str  # the soul of the paper in one sentence
+    spatial_scale: SpatialScale
+    temporal_dynamic: TemporalDynamic
+    physical_process: PhysicalProcess
 
 
 class CinematicConcept(BaseModel):
@@ -37,7 +71,7 @@ class CinematicConcept(BaseModel):
     color_palette: list[str]
     lighting_style: str
     film_references: list[str]
-    runway_prompt: str  # final generation prompt for Runway Gen-4 Image
+    image_prompt: str
     negative_prompt: str
     motion_prompt: str  # final generation prompt for Runway image-to-video
 
