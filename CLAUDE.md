@@ -18,6 +18,36 @@ python web_app.py          # serves at http://127.0.0.1:8000
 
 `.env` requires `ANTHROPIC_API_KEY` and `RUNWAY_API_KEY`.
 
+## Storytelling Engine
+
+A separate four-stage LLM pipeline that produces prose film pitches from scientific papers (no image/video generation).
+
+```bash
+python -m storytelling.pipeline <arxiv_id_or_pdf>
+python -m storytelling.pipeline <arxiv_id_or_pdf> --stage 1   # stop after Stage 1
+```
+
+### Stages (`storytelling/`)
+
+| Stage | Module | Model | Output |
+|---|---|---|---|
+| 1 — Essence | `stages/essence.py` | Haiku | `Essence` — dramatizable raw material |
+| 2 — Concept | `stages/concept.py` | Opus 4.7 | `Concept` — one committed story direction |
+| 3 — Pitch | `stages/pitch.py` | Opus 4.7 | Markdown prose pitch |
+| 4 — Critique | `stages/critique.py` | Sonnet 4.6 | `CritiqueResult` — PASS / REVISE / RECONSIDER |
+
+Stages 1–3 are cached by input hash at `.cache/storytelling/`. Stage 4 is never cached. RECONSIDER verdict triggers a retry loop (max 2) back to Stage 2.
+
+Prompts live in `storytelling/prompts/*.txt` and schemas in `storytelling/schemas/*.json`. Edit these without touching Python. The Stage 1 cache key includes the prompt+schema hash, so any prompt or schema edit auto-invalidates.
+
+Outputs are written to `outputs/storytelling/<paper_id>/`: `essence.json`, `concept.json`, `pitch.md`, `critique.json`, `final_pitch.md`.
+
+### Key design notes
+
+- Stage 1 returns `visual_elements`, `metaphor_surface`, `inviolable_truths`, `honest_difficulty` as **newline-delimited strings** (not JSON arrays), which `_expand()` in `models.py` splits into lists. `emotional_register` stays a proper JSON array (short, never had split issues).
+- Stage 2 has a forced self-check: `inviolable_truths_check` must have at least as many items as `essence.inviolable_truths`. The runner retries up to 2× with feedback if it's missing.
+- Stage 4 receives `essence` in addition to `pitch` and `concept` so the `scientific_integrity` rubric criterion can check against the original inviolable truths.
+
 ## Architecture
 
 Parallax is a linear multi-stage pipeline: **ingest → science agent → creative agent → image generation → (interactive selection) → video generation**.
@@ -55,5 +85,5 @@ Both agents use **forced tool use** (`tool_choice={"type": "tool", "name": "..."
 - Outputs are saved to `outputs/` (CLI) or `outputs/web/<job_id>/` (web).
 
 ### Pre-commit rules
-- Before any commits, check the repo and add any irrelevant components to .gitingore
-- Before any commits, check if CLOUDE.md needs to be updated
+- Before any commits, check the repo and add any irrelevant components to .gitignore
+- Before any commits, check if CLAUDE.md needs to be updated

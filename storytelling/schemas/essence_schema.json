@@ -1,0 +1,49 @@
+{
+  "name": "extract_essence",
+  "description": "Extract the dramatizable raw material from a scientific paper. Output is structured data, not narrative — creativity happens downstream.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "summary": {
+        "type": "string",
+        "description": "A clear, jargon-free summary of the research for a curious non-scientist. 2-4 sentences. Explain what the researchers did and what they found — plainly."
+      },
+      "phenomenon": {
+        "type": "string",
+        "description": "One sentence: what actually happens in nature or reality according to this paper. Not what the researchers did — what the universe does."
+      },
+      "surprise": {
+        "type": "string",
+        "description": "The counterintuitive element — the thing that defies obvious expectation. If the paper is entirely confirmatory and nothing surprises, write an empty string. Do not manufacture surprise."
+      },
+      "stakes": {
+        "type": "string",
+        "description": "Who or what is affected by this phenomenon, and why should anyone care. Be concrete — not 'it has implications for science' but what specifically hangs on this."
+      },
+      "visual_elements": {
+        "type": "string",
+        "description": "3-8 things in the paper that are seeable, movable, or transformable — things a camera could follow. Write each item on its own line. Separate items with a newline character (\\n), not commas or bullets. Each line is one complete description and may freely contain commas, parenthetical names, or abbreviations. Example:\nTwo honeycomb lattices stacked with a slight offset, one stretched relative to the other\nDomain walls separating differently-stacked regions, sharpening as strain redistributes\nElectrons confined to travel along a one-dimensional boundary channel"
+      },
+      "metaphor_surface": {
+        "type": "string",
+        "description": "3-5 everyday things this phenomenon rhymes with — not explanatory analogies, but things that share the same shape or feeling. Write each on its own line, separated by newlines. Each line names one thing only. Example:\nA rope twisted until the strands snap into alignment\nFrost forming along a crack between two cold surfaces\nA tuning fork that only rings at one precise pitch"
+      },
+      "emotional_register": {
+        "type": "array",
+        "items": { "type": "string" },
+        "minItems": 1,
+        "maxItems": 2,
+        "description": "The primary feeling this underlying reality evokes, plus an optional secondary. Use single words or short phrases: awe, dread, wonder, grief, uncanny, quiet euphoria, existential vertigo, etc. Do not manufacture drama — if the paper's underlying reality is calm, say so."
+      },
+      "inviolable_truths": {
+        "type": "string",
+        "description": "3-6 claims about this phenomenon that a film cannot contradict without ceasing to be about this phenomenon. Write each claim on its own line, separated by newlines. Each line is one complete sentence — one claim. Do not pack multiple claims into a single line. Example:\nTopological channels only emerge after in-plane atomic relaxation sharpens the domain boundaries\nAn interlayer electric bias is required for the band gap to open and the topological protection to manifest\nTwo interface types — SP-stacked and AA-stacked — host modes with different spatial distributions"
+      },
+      "honest_difficulty": {
+        "type": "string",
+        "description": "Difficulty flags for what makes this paper hard to dramatize, one per line, separated by newlines. Format each line as 'flag_label: explanation'. One flag per line — do not pack multiple flags into one line. Leave empty string if the paper is filmable without significant obstacles. Common flags: no_visual_phenomenon, highly_technical, low_stakes_for_non_experts, no_narrative_arc, scale_problem, results_are_negative. Example:\nhighly_technical: the stakes require understanding band topology and valley Chern numbers to appreciate\nscale_problem: the channels are nanoscale features invisible without specialized spectroscopy"
+      }
+    },
+    "required": ["summary", "phenomenon", "surprise", "stakes", "visual_elements", "metaphor_surface", "emotional_register", "inviolable_truths", "honest_difficulty"]
+  }
+}

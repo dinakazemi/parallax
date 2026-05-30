@@ -1,0 +1,56 @@
+{
+  "name": "develop_concept",
+  "description": "Commit to one specific story direction for a short film inspired by the paper. Force creative choices — no hedging, no 'it could be...'. IMPORTANT: All array fields must contain plain strings — no markdown bullet prefixes ('- '), no embedded newlines (\\n), no commas within a single item.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "logline": {
+        "type": "string",
+        "description": "One sentence. A specific subject doing or experiencing a specific thing, with stakes. Not a theme or a feeling — an event. Bad: 'A film about the loneliness of dying stars.' Good: 'A red dwarf star, the last light in a cooling universe, spends its final million years learning what it means to be alone.'"
+      },
+      "subject": {
+        "type": "string",
+        "description": "The POV entity the film follows. Can be an animal, object, person, place, or anthropomorphized concept. Be specific — not 'a scientist' but 'a cartographer who has been mapping the same coastline for forty years as the sea takes it.' Not 'a cell' but 'a single T-cell that has been circulating in the bloodstream for eleven years without ever finding what it was trained to kill.'"
+      },
+      "central_image": {
+        "type": "string",
+        "description": "The one frame someone would remember a week after seeing this film. Describe it in present tense as a visual: what is in the frame, where is the camera, what is happening. This image should contain the film's entire emotional argument."
+      },
+      "structure": {
+        "type": "string",
+        "description": "The invented narrative shape of this film, plus a justification for why this shape serves this particular idea. Do not use archetype names (witness arc, hero's journey). Describe the actual movement: what the film opens on, what the turn is, what the final image does. Then explain why THIS structure and not another. 2-4 sentences."
+      },
+      "voice_mode": {
+        "type": "string",
+        "enum": ["wordless", "narration", "dialogue", "mixed"],
+        "description": "Wordless means no language at all — only image, sound, music. Default to this. Only choose narration, dialogue, or mixed if the specific phenomenon demands language to be accessed."
+      },
+      "voice_rationale": {
+        "type": "string",
+        "description": "Why this voice choice for this film. If wordless: what does silence do that language cannot? If language: what can only be accessed through words in this case, and why?"
+      },
+      "tone": {
+        "type": "string",
+        "description": "The emotional register of this film, translated into filmmaking sensibility. Cite 1-2 specific reference films or filmmakers — not as templates to copy, but as shorthand for the kind of attention this film pays to its subject. Explain what quality you're borrowing, not what you're imitating. 2-3 sentences."
+      },
+      "what_this_film_is_not": {
+        "type": "array",
+        "items": { "type": "string" },
+        "minItems": 2,
+        "maxItems": 3,
+        "description": "2-3 obvious versions of this film that are NOT being made. Each item should name a specific, recognizable version and say exactly what's wrong with it: why it would be lesser, cheaper, or more generic than the film being proposed."
+      },
+      "liberties_taken": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "What this concept invents, simplifies, anthropomorphizes, or otherwise departs from the science. Each item is one plain string: the liberty + why narrative needs it. No bullet prefixes. If you've taken no liberties, leave empty."
+      },
+      "inviolable_truths_check": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "REQUIRED when the essence has inviolable_truths. One plain string per truth in the essence's inviolable_truths list — confirm this concept does not contradict it and note how the concept handles it. This list must have exactly as many items as the essence's inviolable_truths list. No bullet prefixes. No embedded newlines."
+      }
+    },
+    "required": ["logline", "subject", "central_image", "structure", "voice_mode", "voice_rationale", "tone", "what_this_film_is_not", "liberties_taken", "inviolable_truths_check"]
+  }
+}

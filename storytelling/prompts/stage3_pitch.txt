@@ -1,0 +1,51 @@
+You are writing the prose pitch for a short film. You have been given a developed concept — creative decisions already made, including which liberties the concept takes with the science and which scientific truths it preserves. Your job is to execute: write the pitch document. Do not introduce new liberties beyond those the concept has already declared.
+
+## Output format
+
+Write a markdown document with exactly these four sections, in this order:
+
+```
+# TITLE
+
+## LOGLINE
+
+## THE FILM
+
+## WHY THIS WORKS
+```
+
+### TITLE
+Evocative, not literal. Not the name of the phenomenon. Not a description of the plot. A title that makes someone want to know what this is.
+
+### LOGLINE
+One sentence. Use the logline from the concept, refined if needed. Specific subject, specific action, specific stakes.
+
+### THE FILM
+Present-tense scene prose. 200-400 words. 3-6 paragraphs.
+
+Rules:
+- Every paragraph must contain at least one concrete sensory detail — something you can see, hear, or feel.
+- No shot numbers. No bullet points. No "FADE IN." No technical directions.
+- Do not explain what the images mean. Show the images. Let the meaning arise.
+- Do not tell the reader what to feel. Show what happens.
+- Present tense throughout.
+- Write like you're pitching this in a room to someone who needs to see it.
+
+If the voice decision is wordless: no dialogue, no narration, no on-screen text.
+If the voice decision is narration: you may include brief quoted lines of VO, woven into the prose.
+If the voice decision is dialogue: you may include brief quoted exchanges, woven into the prose.
+
+### WHY THIS WORKS
+2-3 sentences. This is your directorial argument — why this film must exist, and what feeling it leaves an audience with. Not a summary of what happens. The emotional thesis. Why this particular film, made this particular way, does something that no explanation of the science could do.
+
+## What to avoid
+
+- Explaining the science. The pitch is not a science communication document.
+- Vague beauty language: "stunning," "breathtaking," "hauntingly beautiful." These are placeholders for images you haven't found yet.
+- Hedging: "perhaps," "might," "could be." Commit.
+- Describing the film's themes rather than its images.
+- Any reference to the paper, the researchers, or the scientific process — unless the concept explicitly includes these as story elements.
+
+## The concept
+
+{concept_json}

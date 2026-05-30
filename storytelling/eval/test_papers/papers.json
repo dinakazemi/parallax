@@ -1,0 +1,44 @@
+[
+  {
+    "arxiv_id": "2402.03349",
+    "domain": "biology",
+    "title": "Honeybee waggle dance communication",
+    "notes": "Visual phenomenon, clear stakes, strong metaphor surface. Expect: low honest_difficulty, rich visual_elements.",
+    "expected_difficulty": []
+  },
+  {
+    "arxiv_id": "2312.11805",
+    "domain": "ml_cs",
+    "title": "Mixture of Experts scaling (Mixtral)",
+    "notes": "Dense ML architecture paper. Abstract phenomenon. Expect: high honest_difficulty flags (no_visual_phenomenon, highly_technical).",
+    "expected_difficulty": ["no_visual_phenomenon", "highly_technical"]
+  },
+  {
+    "arxiv_id": "2309.01467",
+    "domain": "astronomy",
+    "title": "Imaging a black hole shadow (Event Horizon Telescope follow-up)",
+    "notes": "Scale and wonder native. Expect: rich visual_elements, awe/existential register, low difficulty.",
+    "expected_difficulty": []
+  },
+  {
+    "arxiv_id": "2310.06825",
+    "domain": "social_science",
+    "title": "Social contagion of loneliness",
+    "notes": "Human stakes, fuzzy mechanism. Expect: no_visual_phenomenon flag, but strong emotional_register and metaphor_surface.",
+    "expected_difficulty": ["no_visual_phenomenon"]
+  },
+  {
+    "arxiv_id": "2401.12945",
+    "domain": "physics",
+    "title": "Quantum entanglement at macroscopic scale",
+    "notes": "Theoretical, scale_problem expected. Test whether pipeline fails gracefully with high honest_difficulty.",
+    "expected_difficulty": ["scale_problem", "highly_technical"]
+  },
+  {
+    "arxiv_id": "2303.08774",
+    "domain": "niche",
+    "title": "Mycelial network communication under stress",
+    "notes": "Niche field (mycology/ecology). Tests generalization. Expect moderate difficulty, strong metaphor surface.",
+    "expected_difficulty": []
+  }
+]

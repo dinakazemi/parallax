@@ -5,6 +5,9 @@
 # Output files
 outputs/
 
+# Pipeline cache (LLM response cache, not source)
+.cache/
+
 # Development script
 run_direct.py
 
